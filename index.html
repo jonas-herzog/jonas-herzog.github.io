@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jonas Herzog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #6c8fff;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --text-muted: #8892a4;
+      --text-dim: #5a6275;
+      --tag-pub: #1e3a5f;
+      --tag-pub-text: #93c5fd;
+      --tag-challenge: #2d1f4e;
+      --tag-challenge-text: #c4b5fd;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(15, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      padding: 0.9rem 2rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* ─── LANG TOGGLE ─── */
+    .lang-toggle {
+      margin-left: auto;
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 0.65rem;
+      color: var(--text-dim);
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .lang-btn:not(.active):hover { color: var(--text-muted); }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 8rem 2rem 5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-photo {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      filter: grayscale(10%);
+    }
+
+    .hero-name {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text) 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-title {
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+
+    .hero-summary {
+      color: var(--text-muted);
+      max-width: 520px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+    .pill svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    section { margin-bottom: 4.5rem; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── PUBLICATIONS ─── */
+    .pub-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .pub-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.4rem;
+      display: grid;
+      grid-template-columns: 3.5rem 1fr auto;
+      gap: 0 1rem;
+      align-items: start;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .pub-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    .pub-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      padding-top: 0.2rem;
+    }
+
+    .pub-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .pub-authors {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .pub-authors em { color: var(--text); font-style: italic; }
+
+    .pub-venue {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+
+    .pub-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      margin-top: 0.15rem;
+    }
+    .tag-pub { background: var(--tag-pub); color: var(--tag-pub-text); }
+    .tag-challenge { background: var(--tag-challenge); color: var(--tag-challenge-text); }
+
+    /* ─── TIMELINE ─── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      gap: 0 1rem;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 0.35rem;
+    }
+    .timeline-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      outline: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .timeline-line {
+      width: 1px;
+      flex: 1;
+      background: var(--border);
+      margin-top: 6px;
+    }
+    .timeline-item:last-child .timeline-line { display: none; }
+
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-role {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .timeline-org {
+      font-size: 0.87rem;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-body {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+    .timeline-body ul { padding-left: 1rem; margin-top: 0.3rem; }
+    .timeline-body li { margin-bottom: 0.2rem; }
+
+    /* ─── AWARDS ─── */
+    .awards-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .award-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.4rem;
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      gap: 0 1rem;
+      align-items: center;
+    }
+
+    .award-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .award-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .award-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+
+    /* ─── SERVICE / SKILLS ─── */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.7rem;
+    }
+
+    .card p { font-size: 0.88rem; color: var(--text-muted); }
+
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+    .skill-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .skill-tag.highlight { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding-top: 6rem; }
+      .hero-photo { margin: 0 auto; }
+      .hero-links { justify-content: center; }
+      .hero-summary { margin: 0 auto 1.5rem; }
+      .pub-card { grid-template-columns: 1fr; }
+      .pub-year { display: none; }
+      nav { gap: 1rem; flex-wrap: wrap; font-size: 0.78rem; }
+      .lang-toggle { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a href="#about"    data-i18n="nav_about">About</a>
+  <a href="#publications" data-i18n="nav_pubs">Publications</a>
+  <a href="#education" data-i18n="nav_edu">Education</a>
+  <a href="#experience" data-i18n="nav_exp">Experience</a>
+  <a href="#service"  data-i18n="nav_service">Service</a>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn"        onclick="setLang('zh')">中文</button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<div class="hero" id="about">
+  <div>
+    <div class="hero-name">Jonas Herzog</div>
+    <div class="hero-title" data-i18n="hero_title">PhD Student &amp; Researcher · Zhejiang University</div>
+    <div class="hero-subtitle" data-i18n="hero_subtitle">Computer Vision · Robotics Perception · Few-Shot &amp; Domain Adaptation</div>
+    <p class="hero-summary" data-i18n="hero_summary">
+      Motivated by scene understanding for robotic decision-making, my research investigates how
+      foundational knowledge can be transferred to downstream tasks through alignment, few-shot,
+      and domain adaptation techniques.
+    </p>
+    <div class="hero-links">
+      <a href="mailto:jherzog@zju.edu.cn" class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        jherzog@zju.edu.cn
+      </a>
+      <a href="Herzog_Jonas_CV.pdf" class="pill" target="_blank" data-i18n-href-en="Herzog_Jonas_CV.pdf" data-i18n-href-zh="简历Jonas浙大博士研究生.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span data-i18n="pill_cv">CV / Résumé</span>
+      </a>
+      <span class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span data-i18n="pill_location">Hangzhou, China</span>
+      </span>
+    </div>
+  </div>
+  <img src="headphoto_white_edit.jpeg" alt="Jonas Herzog" class="hero-photo" />
+</div>
+
+<!-- ─── MAIN ─── -->
+<main>
+
+  <!-- PUBLICATIONS -->
+  <section id="publications">
+    <div class="section-label" data-i18n="sec_pubs">Publications &amp; Projects</div>
+    <div class="pub-list" id="pub-list"></div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-label" data-i18n="sec_edu">Education</div>
+    <div class="timeline" id="edu-timeline"></div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-label" data-i18n="sec_exp">Work Experience</div>
+    <div class="timeline" id="exp-timeline"></div>
+  </section>
+
+  <!-- SERVICE -->
+  <section id="service">
+    <div class="section-label" data-i18n="sec_service">Academic Service</div>
+    <div class="two-col-grid" id="service-grid"></div>
+  </section>
+
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="section-label" data-i18n="sec_awards">Honors &amp; Awards</div>
+    <div class="awards-list" id="awards-list"></div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label" data-i18n="sec_skills">Skills</div>
+    <div class="two-col-grid" id="skills-grid"></div>
+  </section>
+
+</main>
+
+<footer>
+  &copy; 2026 Jonas Herzog &nbsp;·&nbsp; Zhejiang University &nbsp;·&nbsp;
+  <a href="mailto:jherzog@zju.edu.cn" style="color: inherit;">jherzog@zju.edu.cn</a>
+</footer>
+
+<script>
+// ─── TRANSLATIONS ───────────────────────────────────────────────────────────
+
+const t = {
+  en: {
+    // nav
+    nav_about:   'About',
+    nav_pubs:    'Publications',
+    nav_edu:     'Education',
+    nav_exp:     'Experience',
+    nav_service: 'Service',
+    // hero
+    hero_title:    'PhD Student &amp; Researcher · Zhejiang University',
+    hero_subtitle: 'Computer Vision · Robotics Perception · Few-Shot &amp; Domain Adaptation',
+    hero_summary:  'Motivated by scene understanding for robotic decision-making, my research investigates how foundational knowledge can be transferred to downstream tasks through alignment, few-shot, and domain adaptation techniques.',
+    pill_cv:       'CV / Résumé',
+    pill_location: 'Hangzhou, China',
+    // section labels
+    sec_pubs:    'Publications &amp; Projects',
+    sec_edu:     'Education',
+    sec_exp:     'Work Experience',
+    sec_service: 'Academic Service',
+    sec_awards:  'Honors &amp; Awards',
+    sec_skills:  'Skills',
+  },
+  zh: {
+    // nav
+    nav_about:   '简介',
+    nav_pubs:    '论文与项目',
+    nav_edu:     '教育背景',
+    nav_exp:     '工作经历',
+    nav_service: '学术服务',
+    // hero
+    hero_title:    '博士研究生 · 浙江大学',
+    hero_subtitle: '多模态基础模型 · 领域与任务自适应 · 表示学习 · 计算机视觉 · 机器人感知',
+    hero_summary:  '致力于面向机器人决策的场景理解研究，探索如何通过对齐、少样本学习与领域自适应等技术，将基础模型知识迁移至下游任务。',
+    pill_cv:       '简历下载',
+    pill_location: '杭州，中国',
+    // section labels
+    sec_pubs:    '论文与项目成果',
+    sec_edu:     '教育背景',
+    sec_exp:     '工作经历',
+    sec_service: '学术服务',
+    sec_awards:  '荣誉与奖学金',
+    sec_skills:  '个人技能',
+  },
+};
+
+// ─── CONTENT DATA ────────────────────────────────────────────────────────────
+
+const content = {
+  en: {
+    pubs: [
+      {
+        year: '2026',
+        title: 'Few-Shot Adaptation in Vision Language Models',
+        authors: '<em>J. Herzog</em> et al., "Reevaluating the Intra-Modal Misalignment Hypothesis in CLIP"',
+        venue: 'CVPR 2026 <em>(accepted, CCF-A)</em>',
+        tag: 'Publication', tagClass: 'tag-pub',
+      },
+      {
+        year: '2025',
+        title: 'Template Based Novel Object Detection and Segmentation',
+        authors: '<em>J. Herzog</em> et al., "CNOS25" — Winner of <em>"The Best Fast Method"</em> &amp; <em>"The Best Open Source Method"</em> Awards',
+        venue: 'Track 7: Model-free 2D detection of unseen objects on BOP-H3 · <em>10th Intl. Workshop on Recovering 6D Object Pose, ICCV 2025</em>',
+        tag: 'Challenge', tagClass: 'tag-challenge',
+      },
+      {
+        year: '2025',
+        title: 'Promptable Grounding in Scene Graphs for Task Planning',
+        authors: '<em>J. Herzog</em> et al., "Domain-Conditioned Scene Graphs for State-Grounded Task Planning"',
+        venue: 'IROS 2025',
+        tag: 'Publication', tagClass: 'tag-pub',
+      },
+      {
+        year: '2024',
+        title: 'Cross-Domain Few-Shot Segmentation',
+        authors: '<em>J. Herzog</em>, "Adapt Before Comparison: A New Perspective on Cross-Domain Few-Shot Segmentation"',
+        venue: 'CVPR 2024 (CCF-A)',
+        tag: 'Publication', tagClass: 'tag-pub',
+      },
+    ],
+
+    edu: [
+      {
+        date: '09/2024 – 03/2028 (expected)',
+        role: 'PhD in Control Science',
+        org: 'Zhejiang University, Hangzhou, China',
+        body: 'Direction: Transferring multimodal foundational knowledge<br/>Supervisor: Yue Wang<br/>Scholarship awardee of the China Scholarship Council (CSC)',
+      },
+      {
+        date: '09/2020 – 06/2024',
+        role: 'M.Sc. in Computer Science',
+        org: 'Zhejiang University, Hangzhou, China',
+        body: 'Thesis: "Analysis and Advancement of Cross- and Open-Domain Few-Shot Segmentation"<br/>Supervisor: Xi Li<br/>Scholarship awardee of the German Academic Exchange Service (DAAD)',
+      },
+      {
+        date: '10/2016 – 09/2019',
+        role: 'B.Eng. in Information Technology',
+        org: 'Baden-Württemberg Cooperative State University (DHBW), Germany',
+        body: 'Thesis: "Detection of object movements in non-static RGBD camera streams"<br/>Supervisor: Tim Bodenmüller',
+      },
+    ],
+
+    exp: [
+      {
+        date: '09/2019 – 06/2020',
+        role: 'Research Associate',
+        org: 'German Aerospace Center (DLR)',
+        body: '<ul><li>Robotics and Mechatronics Center, Dept. Perception and Cognition, Environmental Modeling.</li><li>Developed, integrated, and deployed solution for stabilizing humanoid robot visual localization through segmenting dynamic objects.</li></ul>',
+      },
+      {
+        date: '09/2016 – 09/2019',
+        role: 'Integrated Degree Program',
+        org: 'German Aerospace Center (DLR)',
+        body: '<ul><li>Robotics and Mechatronics Center, Dept. Perception and Cognition, Environmental Modelling.</li><li>Developed institute\'s robot vision systems, working with Kinect, Xtion, and RealSense sensors.</li><li>Responsible for software engineering, vision library maintenance, eye-in-hand, scene reconstruction, SLAM, and scene flow.</li></ul>',
+      },
+    ],
+
+    service: [
+      { title: 'Journal Reviewer',     body: 'IEEE Transactions on Robotics (T-RO)' },
+      { title: 'Conference Reviewer',  body: 'CVPR, ECCV' },
+    ],
+
+    awards: [
+      { year: '2024', name: 'China Scholarship Council (CSC)',              desc: 'Full scholarship for PhD studies in China' },
+      { year: '2020', name: 'DAAD Scholarship',                             desc: 'Full scholarship for Master\'s studies abroad' },
+    ],
+
+    skills: [
+      {
+        title: 'Languages',
+        tags: [
+          { label: 'German — Native', hi: true },
+          { label: 'English — C1',    hi: true },
+          { label: 'Chinese — HSK 4', hi: false },
+        ],
+      },
+      {
+        title: 'Tools & Technologies',
+        tags: [
+          { label: 'PyTorch',    hi: true  },
+          { label: 'Python',     hi: true  },
+          { label: 'OpenClaw',   hi: false },
+          { label: 'C++',        hi: false },
+          { label: 'Git',        hi: false },
+          { label: 'Linux',      hi: false },
+        ],
+      },
+    ],
+  },
+
+  zh: {
+    pubs: [
+      {
+        year: '2026',
+        title: '少样本适配视觉语言模型',
+        authors: '<em>J. Herzog</em> 等，"Reevaluating the Intra-Modal Misalignment Hypothesis in CLIP"',
+        venue: '录用，CVPR 2026（CCF-A）',
+        tag: '一作论文', tagClass: 'tag-pub',
+      },
+      {
+        year: '2025',
+        title: '基于模板的新颖物体检测与分割',
+        authors: '<em>J. Herzog</em> 等，"CNOS25" — 荣获<em>「最佳快速方法奖」</em>与<em>「最佳开源方法奖」</em>',
+        venue: '赛道7：BOP-H3上未见物体的无模型2D检测，第10届恢复6D物体姿态国际研讨会，ICCV 2025',
+        tag: '挑战赛', tagClass: 'tag-challenge',
+      },
+      {
+        year: '2025',
+        title: '场景图中可提示的 Grounding 用于任务规划',
+        authors: '<em>J. Herzog</em> 等，"Domain-Conditioned Scene Graphs for State-Grounded Task Planning"',
+        venue: 'IROS 2025',
+        tag: '一作论文', tagClass: 'tag-pub',
+      },
+      {
+        year: '2024',
+        title: '跨域少样本分割',
+        authors: '<em>J. Herzog</em>，"Adapt Before Comparison: A New Perspective on Cross-Domain Few-Shot Segmentation"',
+        venue: 'CVPR 2024（CCF-A）',
+        tag: '一作论文', tagClass: 'tag-pub',
+      },
+    ],
+
+    edu: [
+      {
+        date: '2024年9月 – 2028年3月（预计）',
+        role: '博士研究生 · 控制科学与工程',
+        org: '浙江大学，杭州',
+        body: '研究方向：多模态基础知识迁移<br/>导师：王越<br/>中国政府奖学金（CSC）获得者',
+      },
+      {
+        date: '2020年9月 – 2024年6月',
+        role: '硕士 · 计算机科学与技术',
+        org: '浙江大学，杭州',
+        body: '学位论文：《跨域和开放域少样本分割的分析与改进》<br/>导师：李玺<br/>德国学术交流中心奖学金（DAAD）获得者',
+      },
+      {
+        date: '2016年10月 – 2019年9月',
+        role: '学士 · 计算机科学',
+        org: '巴登符腾堡双元制应用技术大学，德国',
+        body: '学位论文：《非静态RGBD相机流中的物体运动检测》<br/>导师：Tim Bodenmüller',
+      },
+    ],
+
+    exp: [
+      {
+        date: '2019年9月 – 2020年6月',
+        role: '研究助理',
+        org: '德国航空航天中心（DLR）',
+        body: '<ul><li>机器人与机电一体化中心，感知与认知部门，环境建模。</li><li>开发、集成并部署解决方案，通过分割动态物体来稳定人形机器人的视觉定位。</li></ul>',
+      },
+      {
+        date: '2016年9月 – 2019年9月',
+        role: '双元制大学项目',
+        org: '德国航空航天中心（DLR）',
+        body: '<ul><li>机器人与机电一体化中心，感知与认知部门，环境建模。</li><li>开发研究所的机器人视觉系统，使用 Kinect、Xtion、RealSense。</li><li>负责软件工程、视觉库维护、眼在手、场景重建、SLAM、场景流。</li></ul>',
+      },
+    ],
+
+    service: [
+      { title: '期刊审稿人', body: 'IEEE Transactions on Robotics（T-RO）' },
+      { title: '会议审稿人', body: 'CVPR，ECCV' },
+    ],
+
+    awards: [
+      { year: '2024', name: '中国政府奖学金（CSC）', desc: '中国高校自主招生项目' },
+      { year: '2020', name: '德国学术交流中心奖学金（DAAD）', desc: '硕士项目全额奖学金' },
+    ],
+
+    skills: [
+      {
+        title: '语言能力',
+        tags: [
+          { label: '德语 — 母语',      hi: true  },
+          { label: '英语 — 流利 / C1', hi: true  },
+          { label: '中文 — 中级 / HSK 4级', hi: false },
+        ],
+      },
+      {
+        title: '开发工具',
+        tags: [
+          { label: 'PyTorch',  hi: true  },
+          { label: 'Python',   hi: true  },
+          { label: 'OpenClaw', hi: false },
+          { label: 'C++',      hi: false },
+          { label: 'Git',      hi: false },
+          { label: 'Linux',    hi: false },
+        ],
+      },
+    ],
+  },
+};
+
+// ─── RENDER HELPERS ──────────────────────────────────────────────────────────
+
+function renderPubs(lang) {
+  return content[lang].pubs.map(p => `
+    <div class="pub-card">
+      <div class="pub-year">${p.year}</div>
+      <div>
+        <div class="pub-title">${p.title}</div>
+        <div class="pub-authors">${p.authors}</div>
+        <div class="pub-venue">${p.venue}</div>
+      </div>
+      <span class="pub-tag ${p.tagClass}">${p.tag}</span>
+    </div>`).join('');
+}
+
+function renderTimeline(items) {
+  return items.map(item => `
+    <div class="timeline-item">
+      <div class="timeline-dot-col"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
+      <div>
+        <div class="timeline-date">${item.date}</div>
+        <div class="timeline-role">${item.role}</div>
+        <div class="timeline-org">${item.org}</div>
+        <div class="timeline-body">${item.body}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderService(items) {
+  return items.map(s => `
+    <div class="card">
+      <div class="card-title">${s.title}</div>
+      <p>${s.body}</p>
+    </div>`).join('');
+}
+
+function renderAwards(items) {
+  return items.map(a => `
+    <div class="award-item">
+      <div class="award-year">${a.year}</div>
+      <div>
+        <div class="award-name">${a.name}</div>
+        <div class="award-desc">${a.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSkills(items) {
+  return items.map(s => `
+    <div class="card">
+      <div class="card-title">${s.title}</div>
+      <div class="skill-tags">
+        ${s.tags.map(tag => `<span class="skill-tag${tag.hi ? ' highlight' : ''}">${tag.label}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ─── LANG SWITCH ─────────────────────────────────────────────────────────────
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+
+  // Toggle button states
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (lang === 'en' ? 'EN' : '中文'));
+  });
+
+  // html lang attribute
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  // Simple text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[lang][key] !== undefined) el.innerHTML = t[lang][key];
+  });
+
+  // CV pill href
+  const cvPill = document.querySelector('[data-i18n-href-en]');
+  if (cvPill) cvPill.href = lang === 'zh'
+    ? cvPill.getAttribute('data-i18n-href-zh')
+    : cvPill.getAttribute('data-i18n-href-en');
+
+  // Content sections
+  document.getElementById('pub-list').innerHTML      = renderPubs(lang);
+  document.getElementById('edu-timeline').innerHTML  = renderTimeline(content[lang].edu);
+  document.getElementById('exp-timeline').innerHTML  = renderTimeline(content[lang].exp);
+  document.getElementById('service-grid').innerHTML  = renderService(content[lang].service);
+  document.getElementById('awards-list').innerHTML   = renderAwards(content[lang].awards);
+  document.getElementById('skills-grid').innerHTML   = renderSkills(content[lang].skills);
+}
+
+// Init
+setLang('en');
+</script>
+
+</body>
+</html>
